@@ -1,17 +1,12 @@
 const express = require('express')
 const cors = require('cors')
-const dotenv = require('dotenv')
-dotenv.config()
 
-const PORT = process.env.PORT
+const PORT = 3300
 const app = express()
+const { userRouters } = require ('./routers')
 
-app.use(cors())
-app.use(express.json())
+app.use(cors()) // untuk memberikan hak akses
+app.use(express.json()) // untuk membaca body dari front end
+app.use('/user', userRouters)
 
-app.get('/', (req, res) => {
-    res.status(200).send('<h4>Welcome to your-api</h4>')
-})
-
-
-app.listen(PORT, () => console.log('Api Running :', PORT));
+app.listen(PORT, ()=> console.log('Api running :', PORT))
