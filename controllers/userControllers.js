@@ -4,8 +4,8 @@ const { db } = require ('../database')
 module.exports = {
     getData: (req,res)=>{
         let scriptQuery = 'select * from user;'
-        if (req.query.nama){
-            scriptQuery = `select * from user where nama = ${db.escape(req.query.nama)};`
+        if (req.query.username){
+            scriptQuery = `select * from user where username = ${db.escape(req.query.username)};`
         }
         db.query(scriptQuery, (err, result)=>{
             if(err) res.status(500).send(err)
@@ -13,15 +13,15 @@ module.exports = {
         })
     },
     addData: (req,res)=>{
-        let {nama, usia,email,berat, kota,tahun,posisi} = req.body
-        let scriptQuery = `insert into user value (null,${db.escape(nama)},${db.escape(usia)},${db.escape(email)},${db.escape(berat)},${db.escape(kota)},${db.escape(tahun)},${db.escape(posisi)});`
+        let {fullname, username, email, password} = req.body
+        let scriptQuery = `insert into user value (null,${db.escape(fullname)},${db.escape(username)},${db.escape(email)},${db.escape(password)},null,null,null,null,null,'user');`
     
         db.query(scriptQuery, (err, result)=>{
             if(err) res.status(500).send(err)
             
-            db.query(`select * from user where nama = ${db.escape(nama)};`,(err,hasil)=>{
+            db.query(`select * from user where username = ${db.escape(username)};`,(err,hasil)=>{
                 if(err) res.status(500).send(err)
-                res.status(200).send({message: "Penambaham Kuser Berhasil", data: hasil})
+                res.status(200).send({message: "Penambaham user Berhasil", data: hasil})
             })
     
             // res.status(200).send(result)
@@ -34,27 +34,27 @@ module.exports = {
             dataUpdate.push(`${prop} = ${db.escape(req.body[prop])}`)
         }
     
-        let updateQuery = `UPDATE user set ${dataUpdate} where no = ${req.params.id};`
+        let updateQuery = `UPDATE user set ${dataUpdate} where id = ${req.params.id};`
     
         db.query(updateQuery, (err, result)=>{
             if(err) res.status(500).send(err)
             
-            db.query(`select * from user where no = ${req.params.id};`,(err,hasil)=>{
+            db.query(`select * from user where id = ${req.params.id};`,(err,hasil)=>{
                 if(err) res.status(500).send(err)
-                res.status(200).send({message: "Edit Data Kuser Berhasil", data: hasil})
+                res.status(200).send({message: "Edit Data user Berhasil", data: hasil})
             })
             
             // res.status(200).send(result)
         })
     },
     deleteData: (req,res)=>{
-        let scriptQuery = `DELETE FROM user where no = ${req.params.id};`
+        let scriptQuery = `DELETE FROM user where id = ${req.params.id};`
         db.query(scriptQuery, (err, result)=>{
             if(err) res.status(500).send(err)
             
             db.query(`select * from user;`,(err,hasil)=>{
                 if(err) res.status(500).send(err)
-                res.status(200).send({message: "Edit Data Kuser Berhasil", data: hasil})
+                res.status(200).send({message: "Edit Data user Berhasil", data: hasil})
             })
             
             // res.status(200).send(result)
