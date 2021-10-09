@@ -21,4 +21,4 @@ db.getConnection((err) => {
 
 module.exports = {
   db,
-};
+}; 

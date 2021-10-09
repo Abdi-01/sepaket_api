@@ -1,0 +1,1 @@
+insert into user values (null,'Super Admin','admin','admin@gmail.com','password',null,null,null,null,null,'admin');
