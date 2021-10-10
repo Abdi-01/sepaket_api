@@ -8,5 +8,6 @@ routers.post('/add-user', userController.addData)
 routers.patch('/edit-user/:id_user', userController.editData)
 routers.delete('/delete-user/:id_user', userController.deleteData)
 routers.patch('/verified', auth ,userController.verification)
+routers.post('/login', userController.loginData)
 
 module.exports = routers
