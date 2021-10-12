@@ -1,11 +1,13 @@
 const userRouters = require("./userRouter");
 const productsRouter = require("./productsRouter");
 const categoryRouter = require("./categoryRouter");
-const parcelRouter = require("./parcelRouter");
+const parcelRouters = require("./parcelRouter");
+const parcelAdminRouter = require("./parcelRouter");
 
 module.exports = {
   userRouters,
   productsRouter,
   categoryRouter,
-  parcelRouter,
+  parcelRouters,
+  parcelAdminRouter,
 };
