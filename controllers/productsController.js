@@ -56,4 +56,14 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+
+  getAvgHargaBeli: (req, res) => {
+    let scriptQuery =
+      "select products.id_cat, categories.category_name, round(avg(harga_beli))  as rata_rata from products inner join categories on products.id_cat = categories.id_cat group by products.id_cat;";
+
+    db.query(scriptQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
 };

@@ -3,13 +3,19 @@ const cors = require("cors");
 
 const PORT = 3300;
 const app = express();
-const { userRouters, productsRouter, categoryRouter } = require("./routers");
+const {
+  userRouters,
+  productsRouter,
+  categoryRouter,
+  parcelRouter,
+} = require("./routers");
 
 app.use(cors()); // untuk memberikan hak akses
 app.use(express.json()); // untuk membaca body dari front end
 
 app.use("/products", productsRouter);
 app.use("/categories", categoryRouter);
+app.use("/parcels", parcelRouter);
 
 app.use("/users", userRouters);
 
