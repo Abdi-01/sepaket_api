@@ -83,6 +83,30 @@ module.exports = {
       res.status(200).send({ message: "Verified Account", success: true })
     })
   },
+  resetPassword: (req, res) => {
+    let {password } = req.body
+    password = Crypto.createHmac("sha1", "hash123").update(password).digest("hex")
+    console.log(password)
+
+    let updateQuery = `UPDATE db_sepaket.users set password='${password}' where email = '${req.params.email}';`;
+    console.log(updateQuery)
+
+    db.query(updateQuery, (err, result) => {
+      if (err) res.status(500).send(err);
+
+      let mail = {
+        from: 'Admin SEPAKET <sepaket.help@gmail.com>',
+        to: `${req.params.email}`,
+        subject: 'Reset Email',
+        html: `<h3>here your new password => ${req.body.password} </h3>`
+      }
+      console.log(mail)
+      transporter.sendMail(mail, (errMail, resMail) => {
+        if (errMail) res.status(500).send({ message: "Registration Failed", success: false, err: errMail })
+        res.status(200).send(result)
+      }) 
+    });
+  },
   editData: (req, res) => {
     let dataUpdate = [];
     for (let prop in req.body) {
