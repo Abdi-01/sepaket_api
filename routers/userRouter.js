@@ -10,4 +10,4 @@ routers.delete('/delete-user/:id_user', userController.deleteData)
 routers.patch('/verified', auth ,userController.verification)
 routers.post('/login', userController.loginData)
 
-module.exports = routers
+module.exports = routers;
