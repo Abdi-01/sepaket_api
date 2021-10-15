@@ -1,6 +1,6 @@
 const express = require("express");
-const { parcelController } = require("../controllers");
+const { parcelAdminController } = require("../controllers");
 const routers = express.Router();
 
-routers.get("/get", parcelController.getParcel);
+routers.get("/get", parcelAdminController.getParcel);
 module.exports = routers;
