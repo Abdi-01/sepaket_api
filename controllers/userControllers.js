@@ -2,6 +2,8 @@ const { db } = require('../database')
 const { createToken } = require('../helper/createToken')
 const Crypto = require('crypto')
 const transporter = require('../helper/nodemailer')
+const { uploader } = require('../helper/uploader')
+const fs = require ('fs')
 
 module.exports = {
   getData: (req, res) => {
@@ -161,6 +163,43 @@ module.exports = {
         }
       );
     });
+  },
+  uploadFile: (req, res) => {
+    console.log('uploadFile Jalan')
+    
+    try {
+      let path = '/images'
+      const upload = uploader(path,'IMG').fields([{name: 'file'}])
+
+      upload(req, res, (error) =>{
+        if (error) {
+          console.log(error)
+          res.status(500).send(error)
+        }
+        
+        const { file } = req.files
+        console.log(file)
+        const filepath = file? path + '/' + file[0].filename:null
+        console.log(filepath)
+        // let data = JSON.parse(req.body.data)
+        // data.image = filepath
+
+        let sqlInsert = `UPDATE db_sepaket.users set photo_user = ${db.escape(filepath)} where id_user = ${req.params.id_user};`
+        console.log(`UPDATE db_sepaket.users set photo_user = ${db.escape(filepath)} where id_user = ${req.params.id_user};`)
+
+        db.query(sqlInsert, (err, result) => {
+          if (err) {
+            res.status(500).send(err)
+            console.log(err)
+            fs.unlinkSync('./public'+filepath)
+          }
+          res.status(200).send({message:"upload photo profile success"})
+        })
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).send(error)
+    }
   },
   deleteData: (req, res) => {
     let scriptQuery = `DELETE FROM db_sepaket.users where id_user = ${req.params.id_user};`;
