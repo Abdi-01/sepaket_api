@@ -11,5 +11,6 @@ routers.patch('/edit-user/:id_user', userController.editData)
 routers.delete('/delete-user/:id_user', userController.deleteData)
 routers.patch('/verified', auth ,userController.verification)
 routers.post('/login', userController.loginData)
+routers.patch('/photo-profile/:id_user', userController.uploadFile)
 
 module.exports = routers;
