@@ -1,10 +1,16 @@
 const express = require("express");
 const cors = require("cors");
-const bearerToken = require('express-bearer-token')
+const bearerToken = require("express-bearer-token");
 
 const PORT = 3300;
 const app = express();
-const { userRouters, productsRouter, categoryRouter, parcelRouters } = require("./routers");
+const {
+  userRouters,
+  productsRouter,
+  categoryRouter,
+  parcelRouters,
+  parcelAdminRouter,
+} = require("./routers");
 
 app.use(cors()); // untuk memberikan hak akses
 app.use(express.json()); // untuk membaca body dari front end
@@ -14,6 +20,7 @@ app.use(express.static('public'))
 
 app.use("/products", productsRouter);
 app.use("/categories", categoryRouter);
+app.use("/parcels-admin", parcelAdminRouter);
 
 app.use("/users", userRouters);
 app.use("/parcels", parcelRouters);
