@@ -66,4 +66,26 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+
+  getProductsStock: (req, res) => {
+    let scriptQuery = "select id_product, product_name, stock from products;";
+
+    db.query(scriptQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  restockProducts: (req, res) => {
+    let { stock } = req.body;
+
+    let updateQuery = `Update products set stock = ${db.escape(
+      stock
+    )} where id_product = ${db.escape(req.params.id)}`;
+    console.log(updateQuery);
+    db.query(updateQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
 };
