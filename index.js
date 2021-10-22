@@ -10,17 +10,19 @@ const {
   categoryRouter,
   parcelRouters,
   parcelAdminRouter,
+  transactionRouter,
 } = require("./routers");
 
 app.use(cors()); // untuk memberikan hak akses
 app.use(express.json()); // untuk membaca body dari front end
 app.use(bearerToken());
 
-app.use(express.static('public'))
+app.use(express.static("public"));
 
 app.use("/products", productsRouter);
 app.use("/categories", categoryRouter);
 app.use("/parcels-admin", parcelAdminRouter);
+app.use("/transaction", transactionRouter);
 
 app.use("/users", userRouters);
 app.use("/parcels", parcelRouters);
