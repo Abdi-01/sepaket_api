@@ -88,4 +88,30 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+
+  revertProductsStockTransaction: (req, res) => {
+    // let { id_trx, id_product, stock } = req.body;
+    // console.log(req.body);
+    let updateStock = req.body
+      .map((val) => {
+        return `when id_product = ${val.id_product} then stock + ${val.stock}`;
+      })
+      .reduce((x, y) => {
+        return `${x}
+    ${y}`;
+      });
+    let products = req.body
+      .map((val) => {
+        return val.id_product;
+      })
+      .reduce((x, y) => {
+        return `${x}, ${y}`;
+      });
+
+    let query = `UPDATE products SET products.stock = (case ${updateStock} end) where products.id_product in (${products})`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
 };
