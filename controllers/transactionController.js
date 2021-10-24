@@ -13,7 +13,8 @@ module.exports = {
   },
 
   getTrx: (req, res) => {
-    let query = "select * from transactions";
+    let query = `select id_trx, date_format(transactions.trx_date, '%d-%m-%Y') as date, users.username, transfer_receipt, total_trx, transfer_date, transactions.status from transactions
+    inner join users on transactions.id_user = users.id_user;`;
     db.query(query, (err, results) => {
       if (err) res.status(500).send(err);
       res.status(200).send(results);
@@ -114,6 +115,76 @@ module.exports = {
     where status="paid" and trx_date between ${db.escape(
       param[0]
     )} and ${db.escape(param[1])} group by transactions.id_trx;`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  confirmTrx: (req, res) => {
+    let query = `UPDATE transactions SET status = "paid" where transactions.id_trx = ${db.escape(
+      req.params.id
+    )};`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  rejectTrx: (req, res) => {
+    let query = `UPDATE transactions SET status = "rejected" where transactions.id_trx = ${db.escape(
+      req.params.id
+    )};`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  getTrxManage: (req, res) => {
+    let param = req.params.par.split(" ");
+
+    let query = `select id_trx, date_format(transactions.trx_date, '%d-%m-%Y') as date, users.username, transfer_receipt, total_trx, transfer_date, transactions.status from transactions
+    inner join users on transactions.id_user = users.id_user where transactions.status = ${db.escape(
+      param[0]
+    )} and transactions.trx_date between ${db.escape(param[1])} and ${db.escape(
+      param[2]
+    )};`;
+
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  getTrxManageAll: (req, res) => {
+    let param = req.params.par.split(" ");
+
+    let query = `select id_trx, date_format(transactions.trx_date, '%d-%m-%Y') as date, users.username, transfer_receipt, total_trx, transfer_date, transactions.status from transactions
+    inner join users on transactions.id_user = users.id_user where transactions.trx_date between ${db.escape(
+      param[0]
+    )} and ${db.escape(param[1])};`;
+
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  getTrxProductsStock: (req, res) => {
+    let query = `select transactions.id_trx, transaction_products.id_product, transaction_products.qty_product as stock from transactions
+    inner join transaction_detail on transactions.id_trx = transaction_detail.id_trx
+    inner join transaction_products on transaction_detail.id_trx_detail = transaction_products.id_trx_detail;`;
+
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  getTrxStatus: (req, res) => {
+    let query = `select transactions.status from transactions group by transactions.status;`;
+
     db.query(query, (err, results) => {
       if (err) res.status(500).send(err);
       res.status(200).send(results);
