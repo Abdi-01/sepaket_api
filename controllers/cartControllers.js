@@ -121,16 +121,21 @@ module.exports = {
     }
   },
   deleteData: (req, res) => {
-    let scriptQuery = `DELETE FROM db_sepaket.users where id_user = ${req.params.id_user};`;
+    let scriptQuery = `DELETE FROM db_sepaket.cart where id_cart = ${req.params.id_cart};`;
+    console.log(scriptQuery)
     db.query(scriptQuery, (err, result) => {
       if (err) res.status(500).send(err);
 
-      db.query(`select * from db_sepaket.users;`, (err, hasil) => {
+      db.query(`DELETE FROM db_sepaket.cart_detail where id_cart = ${req.params.id_cart};`, (err, result) => {
         if (err) res.status(500).send(err);
-        res
-          .status(200)
-          .send({ message: "Edit Data user Berhasil", data: hasil });
-      });
+
+        db.query(`select * from db_sepaket.users;`, (err, hasil) => {
+          if (err) res.status(500).send(err);
+          res
+            .status(200)
+            .send({ message: "Berhasil menghapus Cart", data: hasil });
+        });
+      })
     });
   },
 };
