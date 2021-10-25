@@ -190,4 +190,23 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+
+  getUserTransaction: (req, res) => {
+    let query = `select transactions.id_trx as id, date_format(transactions.trx_date, '%d-%m-%Y') as date, transactions.shipping_address, transactions.total_trx, transactions.status from transactions
+    where id_user=${db.escape(req.params.id)};`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  updateOngoing: (req, res) => {
+    let query = `UPDATE transactions set transactions.status = "done" where transactions.id_trx = ${db.escape(
+      req.params.id
+    )};`;
+    db.query(query, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
 };
