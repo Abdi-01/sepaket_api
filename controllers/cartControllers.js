@@ -56,25 +56,14 @@ module.exports = {
     });
   },
   editData: (req, res) => {
-    let dataUpdate = [];
-    for (let prop in req.body) {
-      dataUpdate.push(`${prop} = ${db.escape(req.body[prop])}`);
-    }
+    let { qty_parcel } = req.body;
 
-    let updateQuery = `UPDATE db_sepaket.users set ${dataUpdate} where id_user = ${req.params.id_user};`;
+    let updateQuery = `UPDATE db_sepaket.cart set qty_parcel=${qty_parcel} where id_cart = ${req.params.id_cart};`;
 
     db.query(updateQuery, (err, result) => {
       if (err) res.status(500).send(err);
 
-      db.query(
-        `select * from db_sepaket.users where id_user = ${req.params.id_user};`,
-        (err, hasil) => {
-          if (err) res.status(500).send(err);
-          res
-            .status(200)
-            .send({ message: "Edit Data user Berhasil", data: hasil });
-        }
-      );
+      res.status(200).send({ message: "Berhasil Mengedit Cart", hasil: result });
     });
   },
   uploadFile: (req, res) => {
