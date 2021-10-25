@@ -17,7 +17,7 @@ module.exports = {
     });
   },
   getDetail: (req, res) => {
-    let scriptQuery = `select cart.id_user, cart.cart_date, cart.id_cart, cart.qty_parcel, parcels.parcel_name, parcels.harga_jual, parcels.photo_parcel from parcels join cart on cart.id_parcel = parcels.id_parcel where id_user= ${db.escape(req.query.userId)};`;
+    let scriptQuery = `select parcels.parcel_name, products.product_name, products.stock, cart_detail.qty_product, products.harga_beli, products.photo_product from parcels join cart join cart_detail join products on cart.id_parcel = parcels.id_parcel and cart.id_cart = cart_detail.id_cart and cart_detail.id_product = products.id_product where id_user= ${db.escape(req.query.userId)};`;
     console.log(scriptQuery)
 
     db.query(scriptQuery, (err, result) => {
@@ -28,7 +28,7 @@ module.exports = {
   },
   addData: (req, res) => { 
     let { id_parcel, id_user, cart_date } = req.body;
-    let scriptQuery = `insert into db_sepaket.cart value (null, ${db.escape(id_parcel)}, ${db.escape(id_user)},${db.escape(cart_date)});`;
+    let scriptQuery = `insert into db_sepaket.cart value (null, ${db.escape(id_parcel)}, ${db.escape(id_user)},${db.escape(cart_date)},1);`;
     console.log(scriptQuery)
 
     db.query(scriptQuery, (err, result) => {
