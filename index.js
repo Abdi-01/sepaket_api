@@ -11,7 +11,8 @@ const {
   parcelRouters,
   parcelAdminRouter,
   transactionRouter,
-  cartRouters
+  cartRouters,
+  userTransactionRouters
 } = require("./routers");
 
 app.use(cors()); // untuk memberikan hak akses
@@ -28,6 +29,7 @@ app.use("/transaction", transactionRouter);
 app.use("/users", userRouters);
 app.use("/parcels", parcelRouters);
 app.use("/carts", cartRouters);
+app.use("/user-transactions", userTransactionRouters);
 
 app.get("/", (req, res) => {
   res.status(200).send("<h4>Integrated mySQL with express</h4>");

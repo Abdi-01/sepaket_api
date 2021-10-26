@@ -7,8 +7,8 @@ const fs = require("fs");
 
 module.exports = {
   getData: (req, res) => {
-    let scriptQuery = `select cart.id_user, cart.cart_date, cart.id_cart, cart.qty_parcel, parcels.id_parcel, parcels.parcel_name, parcels.harga_jual, parcels.photo_parcel from parcels join cart on cart.id_parcel = parcels.id_parcel where id_user= ${db.escape(req.query.userId)};`;
-    // console.log(scriptQuery)
+    let scriptQuery = `select cart.id_user, cart.cart_date, cart.id_cart, cart.qty_parcel, parcels.parcel_name, parcels.harga_jual, parcels.photo_parcel from parcels join cart on cart.id_parcel = parcels.id_parcel where id_user= ${db.escape(req.query.userId)};`;
+    console.log(scriptQuery)
 
     db.query(scriptQuery, (err, result) => {
       if (err) res.status(500).send(err);
@@ -16,8 +16,8 @@ module.exports = {
     });
   },
   getDetail: (req, res) => {
-    let scriptQuery = `select parcels.parcel_name, parcels.id_parcel, products.id_product, products.product_name, products.stock, cart_detail.qty_product, products.harga_beli, products.photo_product from parcels join cart join cart_detail join products on cart.id_parcel = parcels.id_parcel and cart.id_cart = cart_detail.id_cart and cart_detail.id_product = products.id_product where id_user= ${db.escape(req.query.userId)};`;
-    // console.log(scriptQuery)
+    let scriptQuery = `select parcels.parcel_name, products.product_name, products.stock, cart_detail.qty_product, products.harga_beli, products.photo_product from parcels join cart join cart_detail join products on cart.id_parcel = parcels.id_parcel and cart.id_cart = cart_detail.id_cart and cart_detail.id_product = products.id_product where id_user= ${db.escape(req.query.userId)};`;
+    console.log(scriptQuery)
 
     db.query(scriptQuery, (err, result) => {
       if (err) res.status(500).send(err);
@@ -25,34 +25,53 @@ module.exports = {
     });
   },
   addData: (req, res) => { 
-    let { id_parcel, id_user, cart_date } = req.body;
-    let scriptQuery = `insert into db_sepaket.cart value (null, ${db.escape(id_parcel)}, ${db.escape(id_user)},${db.escape(cart_date)},1);`;
-    // console.log(scriptQuery)
+    let { cart_date, total_trx, id_user, address } = req.body;
+    let scriptQuery = `insert into db_sepaket.transactions value (null, ${db.escape(cart_date)}, ${db.escape(total_trx)}, ${db.escape(id_user)}, ${db.escape(address)}, null, null, 'unpaid');`;
+    console.log(scriptQuery)
 
     db.query(scriptQuery, (err, result) => {
       if (err) res.status(500).send(err);
-      res.status(200).send({ message: "Menambah Cart Berhasil", hasil: result });
+      res.status(200).send({ message: "Berhasil menambah data transaction", hasil: result });
     });
   },
   detailData: (req, res) => { 
-    let { id_cart, boxData } = req.body;
-    let value = []
-    boxData.forEach((val)=>{
-      let idProduct = 0
+    let { id_trx, cartList, detailItem  } = req.body;
+    cartList.forEach((val)=>{
+      let value = []
+      let idParcel = 0
       let qty =0
-      idProduct = val.id_product 
-      qty = val.qty
-      value.push(`(${id_cart},${idProduct},${qty})`)
+      idParcel = val.id_parcel 
+      qty = val.qty_parcel
+      value.push(`(null,${id_trx},${idParcel},${qty})`)
+      let valueText = value.join()
+      let scriptQuery = `insert into db_sepaket.transaction_detail value ${valueText};`;
+      console.log("transaction detail tabel2",scriptQuery)
+  
+      db.query(scriptQuery, (err, result1) => {
+        if (err) res.status(500).send(err);
+        
+        let value2 = []
+        detailItem.forEach((val)=>{
+          if(idParcel===val.id_parcel){
+            let idProduct = 0
+            let qty2 =0
+            idProduct = val.id_product
+            qty2 = val.qty_product
+            value2.push(`(null,${result1.insertId},${idProduct},${qty2})`)
+          }
+        })
+        let valueText2 = value2.join()
+        let scriptQuery2 = `insert into db_sepaket.transaction_products value ${valueText2};`;
+        console.log("transaction product tabel3",scriptQuery2)
+    
+        db.query(scriptQuery2, (err, result2) => {
+          if (err) res.status(500).send(err);
+        });
+      });
     })
-    let valueText = value.join()
-    let scriptQuery = `insert into db_sepaket.cart_detail value ${valueText};`;
-    // console.log(scriptQuery)
-
-    db.query(scriptQuery, (err, result) => {
-      if (err) res.status(500).send(err);
-      res.status(200).send({ message: "Menambah Cart Berhasil", hasil: result });
-    });
+    res.status(200).send({ message: "Complete transaction Berhasil"});
   },
+  
   editData: (req, res) => {
     let { qty_parcel } = req.body;
 
@@ -65,7 +84,7 @@ module.exports = {
     });
   },
   uploadFile: (req, res) => {
-    // console.log("uploadFile Jalan");
+    console.log("uploadFile Jalan");
 
     try {
       let path = "/images";
@@ -109,7 +128,7 @@ module.exports = {
   },
   deleteData: (req, res) => {
     let scriptQuery = `DELETE FROM db_sepaket.cart where id_cart = ${req.params.id_cart};`;
-    // console.log(scriptQuery)
+    console.log(scriptQuery)
     db.query(scriptQuery, (err, result) => {
       if (err) res.status(500).send(err);
 
