@@ -104,7 +104,6 @@ module.exports = {
         // data.image = filepath
 
         let sqlInsert = `UPDATE db_sepaket.transactions set transfer_receipt = ${db.escape(filepath)}, status= 'paid' where id_trx = ${req.params.id_trx};`;
-      
 
         db.query(sqlInsert, (err, result) => {
           if (err) {
@@ -112,7 +111,9 @@ module.exports = {
             console.log(err);
             fs.unlinkSync("./public" + filepath);
           }
+
           res.status(200).send({ message: "upload bukti transfer success" });
+
         });
       });
     } catch (error) {
